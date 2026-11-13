@@ -91,6 +91,7 @@ const AVAILABILITY_KEY = "fuji-availability-v1";
 const AVAILABILITY_ENDPOINT = "/api/availability";
 const ADMIN_PASS_KEY = "fuji-admin-pass";
 const SHOP_WHATSAPP = "213669353529";
+const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbyMaCYsIaXGZjl6teX5nbTaO4pE7JbkFX5z_Y-5eTzXjzXdqlwx6lpufODqgz7TLeXO/exec";
 
 const fmt = (amount) => `${Number(amount).toLocaleString("en-US")} DA`;
 
@@ -803,6 +804,19 @@ checkoutForm.addEventListener("submit", (event) => {
   if (orderTotalField) orderTotalField.value = totalText;
   const formData = new FormData(checkoutForm);
   fetch("/", { method: "POST", body: formData }).catch(() => { /* offline / not deployed */ });
+
+  // Mirror the order to Google Sheets (fire-and-forget; no-cors)
+  try {
+    const sheetParams = new URLSearchParams();
+    sheetParams.set("name", name);
+    sheetParams.set("phone", phone);
+    sheetParams.set("delivery", deliveryLabel);
+    sheetParams.set("items", itemsText);
+    sheetParams.set("total", totalText);
+    if (note) sheetParams.set("note", note);
+    fetch(SHEETS_WEBHOOK, { method: "POST", mode: "no-cors", body: sheetParams })
+      .catch(() => { /* ignore */ });
+  } catch (err) { /* ignore */ }
 
   const summary = lines
     .map(
