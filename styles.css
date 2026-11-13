@@ -380,6 +380,29 @@ html.splash-seen .splash {
   right: 0;
 }
 
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.lang-toggle:hover {
+  background: var(--paper-soft);
+  color: var(--accent);
+}
+
 .cart-toggle {
   display: inline-flex;
   align-items: center;
