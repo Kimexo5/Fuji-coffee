@@ -1615,6 +1615,29 @@ html.splash-seen .splash {
   margin-top: 0;
 }
 
+/* --------------------------- RTL (Arabic) --------------------------- */
+[dir="rtl"] .cart {
+  right: auto;
+  left: 0;
+  border-left: none;
+  border-right: 1px solid var(--line);
+  box-shadow: 30px 0 70px rgba(25, 22, 16, 0.12);
+  transform: translateX(-102%);
+}
+
+[dir="rtl"] .cart.open {
+  transform: translateX(0);
+}
+
+[dir="rtl"] .hero-kanji {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .hero-caption {
+  text-align: left;
+}
+
 /* --------------------------- Option dialog -------------------------- */
 
 .item-dialog {
