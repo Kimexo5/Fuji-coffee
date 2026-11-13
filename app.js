@@ -3,11 +3,11 @@
    --------------------------------------------------------------- */
 
 const GROUPS = [
+  { id: "pastries", name: "Cheesecakes & Pastries", meta: "Cheesecake & pastry" },
   { id: "milkshakes", name: "Milkshakes", meta: "Milkshake" },
   { id: "frappuccinos", name: "Frappuccinos", meta: "Frappuccino" },
   { id: "coffee", name: "Coffee", meta: "Coffee" },
-  { id: "other", name: "Other Beverages", meta: "Cold drink" },
-  { id: "pastries", name: "Cheesecakes & Pastries", meta: "Cheesecake & pastry" }
+  { id: "other", name: "Other Beverages", meta: "Cold drink" }
 ];
 
 const MENU = [
@@ -33,7 +33,7 @@ const MENU = [
 
   // Coffee
   { id: "iced-caramel-macchiato", name: "Iced Caramel Macchiato", price: 250, category: "coffee",
-    desc: "Cold milk, espresso poured over, and a caramel cross on top.", image: "images/Iced Caramel Macchiato.png" },
+    desc: "Cold milk, espresso poured over, and a caramel cross on top.", image: "images/Iced Caramel Macchiato.jpg" },
   { id: "iced-latte", name: "Iced Latte", price: 250, category: "coffee",
     desc: "Two shots of espresso over cold milk and clear ice.", image: "images/Iced Latte.jpg" },
   { id: "chocolate-cappuccino", name: "Chocolate Cappuccino", price: 250, category: "coffee",
@@ -51,9 +51,9 @@ const MENU = [
 
   // Cheesecakes & pastries
   { id: "san-sebastian-cheesecake", name: "San Sebastian Cheesecake", price: 400, category: "pastries",
-    desc: "Burnt on top, soft at the centre, cut cold.", image: "images/San Sebastian Cheesecake.png" },
+    desc: "Burnt on top, soft at the centre, cut cold.", image: "images/San Sebastian Cheesecake.jpg" },
   { id: "speculoos-lotus-cheesecake", name: "Speculoos (Lotus) Cheesecake", price: 450, category: "pastries",
-    desc: "Caramelised biscuit crust with a spiced lotus cream.", image: "images/Speculoos (Lotus) Cheesecake.png" },
+    desc: "Caramelised biscuit crust with a spiced lotus cream.", image: "images/Speculoos (Lotus) Cheesecake.jpg" },
   { id: "pistachio-cheesecake", name: "Pistachio Cheesecake", price: 450, category: "pastries",
     desc: "Roasted pistachio folded through a baked cheese base.", image: "images/Pistachio Cheesecake.jpg" },
   { id: "kinder-cheesecake", name: "Kinder Cheesecake", price: 400, category: "pastries",
@@ -61,7 +61,7 @@ const MENU = [
   { id: "strawberry-cheesecake", name: "Strawberry Cheesecake", price: 350, category: "pastries",
     desc: "A soft set cheesecake with strawberries on top.", image: "images/Strawberry Cheesecake.jpg" },
   { id: "oreo-cheesecake", name: "Oreo Cheesecake", price: 350, category: "pastries",
-    desc: "Crushed cookie base, vanilla cheese, and more cookie.", image: "images/Oreo Cheesecake.png" },
+    desc: "Crushed cookie base, vanilla cheese, and more cookie.", image: "images/Oreo Cheesecake.jpg" },
   { id: "coconut-cheesecake", name: "Coconut Cheesecake", price: 350, category: "pastries",
     desc: "Toasted coconut and a light, creamy cheese layer.", image: "images/Coconut Cheesecake.jpg" },
   { id: "blackberry-cheesecake", name: "Blackberry Cheesecake", price: 350, category: "pastries",
@@ -73,7 +73,7 @@ const MENU = [
   { id: "puddle-cake", name: "Puddle Cake", price: 350, category: "pastries",
     desc: "A small chocolate cake with a molten centre.", image: "images/Puddle Cake.jpg" },
   { id: "red-velvet-cake", name: "Red Velvet Cake", price: 350, category: "pastries",
-    desc: "Cocoa-red crumb with a thin cream cheese frosting.", image: "images/Red Velvet Cake.png" },
+    desc: "Cocoa-red crumb with a thin cream cheese frosting.", image: "images/Red Velvet Cake.jpg" },
   { id: "tiramisu", name: "Tiramisu", price: 350, category: "pastries",
     desc: "Espresso-soaked sponge under mascarpone cream.", image: "images/Tiramisu.jpg" },
   { id: "trilece", name: "Trileçe", price: 300, category: "pastries",

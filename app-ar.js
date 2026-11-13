@@ -33,7 +33,7 @@ const MENU = [
 
   // Coffee
   { id: "iced-caramel-macchiato", name: "ماكياتو كراميل بارد", price: 250, category: "coffee",
-    desc: "Cold milk, espresso poured over, and a caramel cross on top.", image: "images/Iced Caramel Macchiato.png" },
+    desc: "Cold milk, espresso poured over, and a caramel cross on top.", image: "images/Iced Caramel Macchiato.jpg" },
   { id: "iced-latte", name: "لاتيه بارد", price: 250, category: "coffee",
     desc: "Two shots of espresso over cold milk and clear ice.", image: "images/Iced Latte.jpg" },
   { id: "chocolate-cappuccino", name: "كابتشينو شوكولاتة", price: 250, category: "coffee",
@@ -51,9 +51,9 @@ const MENU = [
 
   // Cheesecakes & pastries
   { id: "san-sebastian-cheesecake", name: "تشيز كيك سان سيباستيان", price: 400, category: "pastries",
-    desc: "محروق من الأعلى، ناعم في المركز، يُقطع بارداً.", image: "images/San Sebastian Cheesecake.png" },
+    desc: "محروق من الأعلى، ناعم في المركز، يُقطع بارداً.", image: "images/San Sebastian Cheesecake.jpg" },
   { id: "speculoos-lotus-cheesecake", name: "تشيز كيك سبيكولوس (لوتس)", price: 450, category: "pastries",
-    desc: "قاعدة بسكويت كراميل مع كريمة لوتس مبهرة.", image: "images/Speculoos (Lotus) Cheesecake.png" },
+    desc: "قاعدة بسكويت كراميل مع كريمة لوتس مبهرة.", image: "images/Speculoos (Lotus) Cheesecake.jpg" },
   { id: "pistachio-cheesecake", name: "تشيز كيك فستق", price: 450, category: "pastries",
     desc: "فستق محمص مطوي في قاعدة جبن مخبوزة.", image: "images/Pistachio Cheesecake.jpg" },
   { id: "kinder-cheesecake", name: "تشيز كيك كيندر", price: 400, category: "pastries",
@@ -61,7 +61,7 @@ const MENU = [
   { id: "strawberry-cheesecake", name: "تشيز كيك فراولة", price: 350, category: "pastries",
     desc: "تشيز كيك طري مع فراولة على الوجه.", image: "images/Strawberry Cheesecake.jpg" },
   { id: "oreo-cheesecake", name: "تشيز كيك أوريو", price: 350, category: "pastries",
-    desc: "قاعدة بسكويت مسحوق، جبن فانيليا، والمزيد من البسكويت.", image: "images/Oreo Cheesecake.png" },
+    desc: "قاعدة بسكويت مسحوق، جبن فانيليا، والمزيد من البسكويت.", image: "images/Oreo Cheesecake.jpg" },
   { id: "coconut-cheesecake", name: "تشيز كيك جوز الهند", price: 350, category: "pastries",
     desc: "جوز هند محمص وطبقة جبن خفيفة وكريمية.", image: "images/Coconut Cheesecake.jpg" },
   { id: "blackberry-cheesecake", name: "تشيز كيك توت أسود", price: 350, category: "pastries",
@@ -73,7 +73,7 @@ const MENU = [
   { id: "puddle-cake", name: "كعكة بودل", price: 350, category: "pastries",
     desc: "كعكة شوكولاتة صغيرة مع مركز منصهر.", image: "images/Puddle Cake.jpg" },
   { id: "red-velvet-cake", name: "كعكة رد فلفت", price: 350, category: "pastries",
-    desc: "فتات كاكاو-أحمر مع طبقة رقيقة من كريمة الجبن.", image: "images/Red Velvet Cake.png" },
+    desc: "فتات كاكاو-أحمر مع طبقة رقيقة من كريمة الجبن.", image: "images/Red Velvet Cake.jpg" },
   { id: "tiramisu", name: "تيراميسو", price: 350, category: "pastries",
     desc: "إسفنج منقوع في إسبريسو تحت كريمة ماسكاربوني.", image: "images/Tiramisu.jpg" },
   { id: "trilece", name: "تريليش", price: 300, category: "pastries",
