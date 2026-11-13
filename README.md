@@ -76,7 +76,7 @@ The tall 9:16 photos (Chocolate Milkshake, Strawberry Milkshake, Blackberry Chee
 1. Push this folder to a GitHub repository.
 2. In Netlify: **Add new site → Import an existing project** → pick the repo. Build command: none. Publish directory: `.` (functions are auto-detected from `netlify/functions`).
 3. In **Site settings → Environment variables**, add `ADMIN_PASSPHRASE` = a passphrase you choose (used to unlock "Manage availability" on the live site).
-4. In **Forms → Form notifications**, add an **Email notification** for the `order` form to `fuji.coffeee@gmail.com`.
+4. In **Forms → Form notifications**, add an **Email notification** for the `order` form to `fuji.coffeeee@gmail.com`.
 5. Deploy. Orders then land in the Netlify Forms dashboard and by email; the "Send on WhatsApp" button opens `https://wa.me/213669353529` with the order text.
 6. Availability: open the site, click **Manage availability**, enter the passphrase, flip switches. Changes are stored in Netlify Blobs and show up for every customer on reload.
 
