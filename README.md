@@ -71,16 +71,19 @@ The tall 9:16 photos (Chocolate Milkshake, Strawberry Milkshake, Blackberry Chee
 | Cart storage key | `STORAGE_KEY` in `app.js` |
 | Availability storage key and defaults | `AVAILABILITY_KEY` and `loadAvailability()` in `app.js` |
 
-## Deploy to Netlify (orders + availability)
+## Deploy to Vercel (orders + availability)
 
-1. Push this folder to a GitHub repository.
-2. In Netlify: **Add new site → Import an existing project** → pick the repo. Build command: none. Publish directory: `.` (functions are auto-detected from `netlify/functions`).
-3. In **Site settings → Environment variables**, add `ADMIN_PASSPHRASE` = a passphrase you choose (used to unlock "Manage availability" on the live site).
-4. In **Forms → Form notifications**, add an **Email notification** for the `order` form to `fuji.coffeeee@gmail.com`.
-5. Deploy. Orders then land in the Netlify Forms dashboard and by email; the "Send on WhatsApp" button opens `https://wa.me/213669353529` with the order text.
-6. Availability: open the site, click **Manage availability**, enter the passphrase, flip switches. Changes are stored in Netlify Blobs and show up for every customer on reload.
+1. Push this folder to a GitHub repository (already done: `Kimexo5/Fuji-coffee`).
+2. Go to **vercel.com → Add New → Project** → import the repo. Framework preset: **Other**. Build command: none. Output directory: `.` (or leave default). Vercel auto-detects `api/` as serverless functions.
+3. In **Project Settings → Environment Variables**, add:
+   - `APPS_SCRIPT_URL` = your Google Apps Script web app URL (the one ending in `/exec`)
+   - `ADMIN_PASSPHRASE` = `0123` (or your own)
+4. In your Google Sheet's Apps Script, set the script property `ADMIN_PASSPHRASE` = `0123` (Project Settings → Script Properties). Replace the script code with the version that includes availability handling (doGet + doPost with action=availability).
+5. Deploy. Vercel builds automatically on every push to `main`.
 
-Local test: `npm install` then `npx netlify dev` (reads `.env` with `ADMIN_PASSPHRASE=...`).
+Orders go to Google Sheets + email (via Apps Script). Availability is stored in an "Availability" sheet tab and synced through `/api/availability`.
+
+Local test: `npm install` then `npx vercel dev` (reads `.env` with `APPS_SCRIPT_URL` and `ADMIN_PASSPHRASE`).
 
 ## Note on checkout
 

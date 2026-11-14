@@ -807,10 +807,8 @@ checkoutForm.addEventListener("submit", (event) => {
   if (orderAreaField) orderAreaField.value = zoneName;
   if (orderFeeField) orderFeeField.value = fmt(fee);
   if (orderAddressField) orderAddressField.value = address;
-  const formData = new FormData(checkoutForm);
-  fetch("/", { method: "POST", body: formData }).catch(() => { /* offline / not deployed */ });
-
-  // Mirror the order to Google Sheets (fire-and-forget; no-cors)
+  // Send the order to Google Sheets (fire-and-forget; no-cors)
+  // (Netlify Forms is not used on Vercel; Sheets is the destination.)
   try {
     const sheetParams = new URLSearchParams();
     sheetParams.set("name", name);
