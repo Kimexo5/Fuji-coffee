@@ -273,8 +273,6 @@ There is no rush, and there are no shortcuts. Just a window, something cold, and
         <input type="hidden" name="form-name" value="order">
         <input type="hidden" name="items" id="orderItemsField" value="">
         <input type="hidden" name="total" id="orderالمجموعField" value="">
-        <input type="hidden" name="deliveryArea" id="orderAreaField" value="">
-        <input type="hidden" name="deliveryFee" id="orderFeeField" value="">
         <input type="hidden" name="address" id="orderAddressField" value="">
         <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
         <div class="field-grid">
@@ -288,17 +286,6 @@ There is no rush, and there are no shortcuts. Just a window, something cold, and
           </label>
         </div>
         <label class="field">
-          <span>منطقة التوصيل</span>
-          <select id="deliveryArea" name="deliveryArea" required>
-            <option value="" disabled selected>اختر منطقتك</option>
-            <option value="zone-1">المنطقة 1 — حتى 1.5 كم — 150 دج</option>
-            <option value="zone-2">المنطقة 2 — 1.5 إلى 3 كم — 200 دج</option>
-            <option value="zone-3">المنطقة 3 — 3 إلى 5.5 كم — 250 دج</option>
-            <option value="zone-4">المنطقة 4 — 5.5 إلى 7 كم — 300 دج</option>
-            <option value="zone-5">المنطقة 5 — أكثر من 7 كم — 350 دج</option>
-          </select>
-        </label>
-        <label class="field">
           <span>تفاصيل العنوان </span>
           <input type="text" id="deliveryAddress" name="address" placeholder="شارع، مبنى، معلم…" maxlength="200">
         </label>
@@ -309,9 +296,11 @@ There is no rush, and there are no shortcuts. Just a window, something cold, and
 
         <dl class="totals">
           <div><dt>المجموع الفرعي</dt><dd id="subtotal">0 DA</dd></div>
-          <div><dt>التوصيل</dt><dd id="deliveryFee">—</dd></div>
+          <div><dt>التوصيل</dt><dd id="deliveryFee">يختلف حسب الموقع</dd></div>
+        <p class="delivery-note">  costo de envío varies depending on your location.</p>
           <div class="total-row"><dt>المجموع</dt><dd id="total">0 DA</dd></div>
         </dl>
+        <p class="delivery-note">تكلفة التوصيل تختلف حسب موقعك.</p>
 
         <button class="btn btn-primary checkout-btn" type="submit">تأكيد الطلب</button>
         <p class="cart-note">الدفع عند التوصيل. سنتصل بك لتأكيد عنوانك.</p>

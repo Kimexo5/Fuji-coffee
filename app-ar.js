@@ -139,7 +139,6 @@ const scrim = document.getElementById("scrim");
 const checkoutForm = document.getElementById("checkoutForm");
 const customerName = document.getElementById("customerName");
 const customerPhone = document.getElementById("customerPhone");
-const deliveryArea = document.getElementById("deliveryArea");
 const deliveryAddress = document.getElementById("deliveryAddress");
 const deliveryFeeEl = document.getElementById("deliveryFee");
 const orderNote = document.getElementById("orderNote");
@@ -562,11 +561,10 @@ function renderCart() {
     .join("");
 
   const subtotal = lines.reduce((sum, { line, item }) => sum + linePrice(item) * line.qty, 0);
-  const fee = deliveryArea ? (DELIVERY_ZONES.find((z) => z.id === deliveryArea.value)?.fee || 0) : 0;
-  const total = subtotal + fee;
+  const total = subtotal;
 
   subtotalEl.textContent = fmt(subtotal);
-  if (deliveryFeeEl) deliveryFeeEl.textContent = fee ? fmt(fee) : "—";
+  if (deliveryFeeEl) deliveryFeeEl.textContent = "يختلف حسب الموقع";
   totalEl.textContent = fmt(total);
   cartFoot.hidden = false;
   updateReadyHint();
@@ -740,10 +738,6 @@ customerPhone.addEventListener("input", () => {
   if (customerPhone.value.trim()) customerPhone.setCustomValidity("");
 });
 
-if (deliveryArea) {
-  deliveryArea.addEventListener("change", () => renderCart());
-}
-
 checkoutForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -760,28 +754,20 @@ checkoutForm.addEventListener("submit", (event) => {
     }
   }
 
-  if (deliveryArea && !deliveryArea.value) {
-    deliveryArea.setCustomValidity("Please choose your delivery area.");
-  } else if (deliveryArea) {
-    deliveryArea.setCustomValidity("");
-  }
-
   if (!checkoutForm.checkValidity()) {
     checkoutForm.reportValidity();
     return;
   }
   customerName.setCustomValidity("");
   customerPhone.setCustomValidity("");
-  if (deliveryArea) deliveryArea.setCustomValidity("");
 
   const name = customerName.value.trim().slice(0, 60);
   const phone = customerPhone.value.trim().slice(0, 20);
   const orderNumber = `#FJ-${Math.floor(1000 + Math.random() * 9000)}`;
   const note = orderNote.value.trim().slice(0, 120);
 
-  const zone = deliveryArea ? DELIVERY_ZONES.find((z) => z.id === deliveryArea.value) : null;
-  const zoneName = zone ? zone.name : "";
-  const fee = zone ? zone.fee : 0;
+  const zoneName = "";
+  const fee = 0;
   const address = deliveryAddress ? deliveryAddress.value.trim().slice(0, 200) : "";
 
   const lines = cart
@@ -799,13 +785,9 @@ checkoutForm.addEventListener("submit", (event) => {
   // hand the order to Netlify Forms (best effort; works once deployed)
   const orderItemsField = document.getElementById("orderItemsField");
   const orderTotalField = document.getElementById("orderTotalField");
-  const orderAreaField = document.getElementById("orderAreaField");
-  const orderFeeField = document.getElementById("orderFeeField");
   const orderAddressField = document.getElementById("orderAddressField");
   if (orderItemsField) orderItemsField.value = itemsText;
   if (orderTotalField) orderTotalField.value = totalText;
-  if (orderAreaField) orderAreaField.value = zoneName;
-  if (orderFeeField) orderFeeField.value = fmt(fee);
   if (orderAddressField) orderAddressField.value = address;
   // Send the order to Google Sheets (fire-and-forget; no-cors)
   // (Netlify Forms is not used on Vercel; Sheets is the destination.)
@@ -813,9 +795,7 @@ checkoutForm.addEventListener("submit", (event) => {
     const sheetParams = new URLSearchParams();
     sheetParams.set("name", name);
     sheetParams.set("phone", phone);
-    sheetParams.set("area", zoneName);
     sheetParams.set("address", address);
-    sheetParams.set("fee", fmt(fee));
     sheetParams.set("items", itemsText);
     sheetParams.set("total", totalText);
     if (note) sheetParams.set("note", note);
@@ -848,12 +828,10 @@ checkoutForm.addEventListener("submit", (event) => {
       </div>
       <h3>Thank you, ${escapeHtml(name)}</h3>
       <p class="order-number">Order ${orderNumber}</p>
-      <p class="order-ready">Delivery to <strong>${escapeHtml(zoneName)}</strong>${address ? ` · ${escapeHtml(address)}` : ""}. We'll call you at ${escapeHtml(phone)} when your order is on the way. Pay on delivery.</p>
+      <p class="order-ready">${address ? `Delivery to ${escapeHtml(address)}. ` : ""}We'll call you at ${escapeHtml(phone)} when your order is on the way. Pay on delivery.</p>
       ${note ? `<p class="order-ready">“${escapeHtml(note)}”</p>` : ""}
       <div class="order-summary">
         <ul>${summary}</ul>
-        <div class="summary-total"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
-        <div class="summary-total"><span>Delivery (${escapeHtml(zoneName)})</span><span>${fmt(fee)}</span></div>
         <div class="summary-total"><span>Total</span><span>${fmt(total)}</span></div>
       </div>
       <button class="btn btn-ghost" type="button" data-neworder>Start a new order</button>

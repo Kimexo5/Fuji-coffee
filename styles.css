@@ -1547,6 +1547,13 @@ html.splash-seen .splash {
   color: var(--ink);
 }
 
+.delivery-note {
+  margin-top: 8px;
+  font-size: 11.5px;
+  color: var(--muted);
+  text-align: center;
+}
+
 .checkout-btn {
   width: 100%;
   padding: 15px 20px;

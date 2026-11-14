@@ -273,8 +273,6 @@ There is no rush, and there are no shortcuts. Just a window, something cold, and
         <input type="hidden" name="form-name" value="order">
         <input type="hidden" name="items" id="orderItemsField" value="">
         <input type="hidden" name="total" id="orderTotalField" value="">
-        <input type="hidden" name="deliveryArea" id="orderAreaField" value="">
-        <input type="hidden" name="deliveryFee" id="orderFeeField" value="">
         <input type="hidden" name="address" id="orderAddressField" value="">
         <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
         <div class="field-grid">
@@ -288,17 +286,6 @@ There is no rush, and there are no shortcuts. Just a window, something cold, and
           </label>
         </div>
         <label class="field">
-          <span>Delivery area</span>
-          <select id="deliveryArea" name="deliveryArea" required>
-            <option value="" disabled selected>Select your area</option>
-            <option value="zone-1">Zone 1 — up to 1.5 km — 150 DA</option>
-            <option value="zone-2">Zone 2 — 1.5 to 3 km — 200 DA</option>
-            <option value="zone-3">Zone 3 — 3 to 5.5 km — 250 DA</option>
-            <option value="zone-4">Zone 4 — 5.5 to 7 km — 300 DA</option>
-            <option value="zone-5">Zone 5 — over 7 km — 350 DA</option>
-          </select>
-        </label>
-        <label class="field">
           <span>Address details</span>
           <input type="text" id="deliveryAddress" name="address" placeholder="Street, building, landmark…" maxlength="200">
         </label>
@@ -309,9 +296,10 @@ There is no rush, and there are no shortcuts. Just a window, something cold, and
 
         <dl class="totals">
           <div><dt>Subtotal</dt><dd id="subtotal">0 DA</dd></div>
-          <div><dt>Delivery</dt><dd id="deliveryFee">—</dd></div>
+          <div><dt>Delivery</dt><dd id="deliveryFee">Varies by location</dd></div>
           <div class="total-row"><dt>Total</dt><dd id="total">0 DA</dd></div>
         </dl>
+        <p class="delivery-note">Delivery cost varies depending on your location.</p>
 
         <button class="btn btn-primary checkout-btn" type="submit">Place order</button>
         <p class="cart-note">Pay on delivery. We'll call to confirm your address.</p>
