@@ -815,23 +815,6 @@ checkoutForm.addEventListener("submit", (event) => {
     .join("; ");
   const totalText = fmt(total);
 
-  const waLines = [
-    "New delivery order - Fuji Coffee",
-    `Name: ${name}`,
-    `Phone: ${phone}`,
-    `Delivery area: ${zoneName}`,
-    address ? `Address: ${address}` : "",
-    `Delivery time: ${deliveryLabel}`,
-    `Delivery fee: ${fmt(fee)}`,
-    "Items:",
-    ...lines.map(({ line, item }) => `  ${line.qty} x ${item.name} - ${fmt(linePrice(item) * line.qty)}`),
-    `Subtotal: ${fmt(subtotal)}`,
-    `Total: ${totalText}`,
-    note ? `Note: ${note}` : ""
-  ].filter(Boolean);
-  const waText = encodeURIComponent(waLines.join("\\n"));
-  const waUrl = `https://wa.me/${SHOP_WHATSAPP}?text=${waText}`;
-
   // hand the order to Netlify Forms (best effort; works once deployed)
   const orderItemsField = document.getElementById("orderItemsField");
   const orderTotalField = document.getElementById("orderTotalField");
@@ -895,10 +878,7 @@ checkoutForm.addEventListener("submit", (event) => {
         <div class="summary-total"><span>Delivery (${escapeHtml(zoneName)})</span><span>${fmt(fee)}</span></div>
         <div class="summary-total"><span>Total</span><span>${fmt(total)}</span></div>
       </div>
-      <div class="order-actions">
-        <a class="btn btn-ghost" href="${waUrl}" target="_blank" rel="noopener">Send on WhatsApp</a>
-        <button class="btn btn-ghost" type="button" data-neworder>Start a new order</button>
-      </div>
+      <button class="btn btn-ghost" type="button" data-neworder>Start a new order</button>
     </div>
   `;
   cartBody.scrollTop = 0;
