@@ -759,6 +759,14 @@ html.splash-seen .splash {
   color: var(--muted);
 }
 
+.manage-bar {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+}
+
 .filters {
   display: inline-flex;
   flex-wrap: wrap;

@@ -183,16 +183,7 @@
 
         <div class="menu-bar">
           <p class="menu-note">All prices are in Algerian dinar (DA). Cakes are cut to order, and everything is made in small batches.</p>
-          <button class="manage-btn" id="manageToggle" type="button" aria-pressed="false" aria-controls="manageHint">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-              <path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path>
-              <circle cx="15" cy="7" r="2"></circle>
-              <circle cx="9" cy="17" r="2"></circle>
-            </svg>
-            <span>Manage availability</span>
-          </button>
         </div>
-        <p class="manage-hint" id="manageHint" hidden>Flip a switch to mark an item sold out. Changes sync to every customer's menu.</p>
 
         <div class="menu-root" id="menuRoot"></div>
       </div>
@@ -249,6 +240,19 @@ There is no rush, and there are no shortcuts. Just a window, something cold, and
       <p class="footer-copy">© 2026 Fuji Coffee</p>
     </div>
   </footer>
+
+  <!-- Manage availability (bottom of site) -->
+  <div class="manage-bar">
+    <button class="manage-btn" id="manageToggle" type="button" aria-pressed="false" aria-controls="manageHint">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path>
+        <circle cx="15" cy="7" r="2"></circle>
+        <circle cx="9" cy="17" r="2"></circle>
+      </svg>
+      <span>Manage availability</span>
+    </button>
+    <p class="manage-hint" id="manageHint" hidden>Flip a switch to mark an item sold out. Changes sync to every customer's menu.</p>
+  </div>
 
   <!-- Cart -->
   <div class="scrim" id="scrim" hidden></div>
