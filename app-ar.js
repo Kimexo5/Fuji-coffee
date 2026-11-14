@@ -95,11 +95,11 @@ const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbyMaCYsIaXGZjl6t
 
 // Delivery zones — edit names/fees to match your area.
 const DELIVERY_ZONES = [
-  { id: "zone-1", name: "المنطقة 1 — حتى 3 كم", fee: 150 },
-  { id: "zone-2", name: "المنطقة 2 — 3 إلى 5 كم", fee: 200 },
-  { id: "zone-3", name: "المنطقة 3 — 5 إلى 7 كم", fee: 250 },
-  { id: "zone-4", name: "المنطقة 4 — 7 إلى 8 كم", fee: 300 },
-  { id: "zone-5", name: "المنطقة 5 — أكثر من 8 كم", fee: 350 }
+  { id: "zone-1", name: "المنطقة 1 — حتى 1.5 كم", fee: 150 },
+  { id: "zone-2", name: "المنطقة 2 — 1.5 إلى 3 كم", fee: 200 },
+  { id: "zone-3", name: "المنطقة 3 — 3 إلى 5.5 كم", fee: 250 },
+  { id: "zone-4", name: "المنطقة 4 — 5.5 إلى 7 كم", fee: 300 },
+  { id: "zone-5", name: "المنطقة 5 — أكثر من 7 كم", fee: 350 }
 ];
 
 const fmt = (amount) => `${Number(amount).toLocaleString("en-US")} DA`;
