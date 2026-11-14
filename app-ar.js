@@ -95,11 +95,11 @@ const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbyMaCYsIaXGZjl6t
 
 // Delivery zones — edit names/fees to match your area.
 const DELIVERY_ZONES = [
-  { id: "zone-1", name: "المنطقة 1 — حتى 2 كم", fee: 150 },
-  { id: "zone-2", name: "المنطقة 2 — 2 إلى 5 كم", fee: 200 },
-  { id: "zone-3", name: "المنطقة 3 — 5 إلى 8 كم", fee: 250 },
-  { id: "zone-4", name: "المنطقة 4 — 8 إلى 12 كم", fee: 300 },
-  { id: "zone-5", name: "المنطقة 5 — أكثر من 12 كم", fee: 350 }
+  { id: "zone-1", name: "المنطقة 1 — حتى 3 كم", fee: 150 },
+  { id: "zone-2", name: "المنطقة 2 — 3 إلى 5 كم", fee: 200 },
+  { id: "zone-3", name: "المنطقة 3 — 5 إلى 7 كم", fee: 250 },
+  { id: "zone-4", name: "المنطقة 4 — 7 إلى 8 كم", fee: 300 },
+  { id: "zone-5", name: "المنطقة 5 — أكثر من 8 كم", fee: 350 }
 ];
 
 const fmt = (amount) => `${Number(amount).toLocaleString("en-US")} DA`;
@@ -139,12 +139,10 @@ const scrim = document.getElementById("scrim");
 const checkoutForm = document.getElementById("checkoutForm");
 const customerName = document.getElementById("customerName");
 const customerPhone = document.getElementById("customerPhone");
-const deliveryTime = document.getElementById("deliveryTime");
 const deliveryArea = document.getElementById("deliveryArea");
 const deliveryAddress = document.getElementById("deliveryAddress");
 const deliveryFeeEl = document.getElementById("deliveryFee");
 const orderNote = document.getElementById("orderNote");
-const readyHint = document.getElementById("readyHint");
 const subtotalEl = document.getElementById("subtotal");
 const totalEl = document.getElementById("total");
 const toastEl = document.getElementById("toast");
@@ -734,19 +732,6 @@ document.addEventListener("keydown", (event) => {
 
 /* ----------------------------- Checkout ----------------------------- */
 
-function updateReadyHint() {
-  if (cartTotalQty() === 0 || cartFoot.hidden) {
-    readyHint.textContent = "";
-    return;
-  }
-  const minutes = Number(deliveryTime.value) || 30;
-  const ready = new Date(Date.now() + minutes * 60000);
-  const time = ready.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-  readyHint.textContent = `Estimated delivery around ${time} · pay on delivery`;
-}
-
-deliveryTime.addEventListener("change", updateReadyHint);
-
 customerName.addEventListener("input", () => {
   if (customerName.value.trim()) customerName.setCustomValidity("");
 });
@@ -791,13 +776,9 @@ checkoutForm.addEventListener("submit", (event) => {
 
   const name = customerName.value.trim().slice(0, 60);
   const phone = customerPhone.value.trim().slice(0, 20);
-  const minutes = Number(deliveryTime.value) || 30;
-  const ready = new Date(Date.now() + minutes * 60000);
-  const readyTime = ready.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   const orderNumber = `#FJ-${Math.floor(1000 + Math.random() * 9000)}`;
   const note = orderNote.value.trim().slice(0, 120);
 
-  const deliveryLabel = deliveryTime.options[deliveryTime.selectedIndex]?.text || "في أقرب وقت ممكن";
   const zone = deliveryArea ? DELIVERY_ZONES.find((z) => z.id === deliveryArea.value) : null;
   const zoneName = zone ? zone.name : "";
   const fee = zone ? zone.fee : 0;
@@ -834,7 +815,6 @@ checkoutForm.addEventListener("submit", (event) => {
     const sheetParams = new URLSearchParams();
     sheetParams.set("name", name);
     sheetParams.set("phone", phone);
-    sheetParams.set("delivery", deliveryLabel);
     sheetParams.set("area", zoneName);
     sheetParams.set("address", address);
     sheetParams.set("fee", fmt(fee));
@@ -870,7 +850,7 @@ checkoutForm.addEventListener("submit", (event) => {
       </div>
       <h3>Thank you, ${escapeHtml(name)}</h3>
       <p class="order-number">Order ${orderNumber}</p>
-      <p class="order-ready">Delivery to <strong>${escapeHtml(zoneName)}</strong>${address ? ` · ${escapeHtml(address)}` : ""}. Expected around <strong>${readyTime}</strong>. We'll call you at ${escapeHtml(phone)} when your order is on the way. Pay on delivery.</p>
+      <p class="order-ready">Delivery to <strong>${escapeHtml(zoneName)}</strong>${address ? ` · ${escapeHtml(address)}` : ""}. We'll call you at ${escapeHtml(phone)} when your order is on the way. Pay on delivery.</p>
       ${note ? `<p class="order-ready">“${escapeHtml(note)}”</p>` : ""}
       <div class="order-summary">
         <ul>${summary}</ul>
