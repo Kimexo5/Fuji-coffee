@@ -893,20 +893,20 @@ html.splash-seen .splash {
   transform: scale(1.03);
 }
 
-.card.is-soldout .menu-img {
+.card.is-unavailable .menu-img {
   opacity: 0.38;
   filter: grayscale(0.4);
 }
 
-.card.is-soldout:hover .menu-img {
+.card.is-unavailable:hover .menu-img {
   transform: none;
 }
 
-.card.is-soldout .card-add {
+.card.is-unavailable .card-add {
   display: none;
 }
 
-.soldout-badge {
+.unavailable-badge {
   position: absolute;
   top: 12px;
   left: 12px;

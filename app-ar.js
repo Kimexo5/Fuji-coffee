@@ -301,24 +301,24 @@ function isAvailable(id) {
 function updateCardAvailability(card, item, available) {
   if (!card) return;
 
-  card.classList.toggle("is-soldout", !available);
+  card.classList.toggle("is-unavailable", !available);
 
   const addButton = card.querySelector(".card-add");
   if (addButton) {
     addButton.disabled = !available;
     addButton.setAttribute(
       "aria-label",
-      available ? `Add ${item.name} to order` : `${item.name} is sold out`
+      available ? `Add ${item.name} to order` : `${item.name} is unavailable`
     );
   }
 
   const media = card.querySelector(".card-media");
-  let badge = card.querySelector(".soldout-badge");
+  let badge = card.querySelector(".unavailable-badge");
 
   if (!available && !badge && media) {
     badge = document.createElement("span");
-    badge.className = "soldout-badge";
-    badge.textContent = "Sold out";
+    badge.className = "unavailable-badge";
+    badge.textContent = "Unavailable";
     media.insertBefore(badge, media.firstChild);
   } else if (available && badge) {
     badge.remove();
@@ -347,7 +347,7 @@ function menuCard(item, index) {
   const available = isAvailable(item.id);
 
   return `
-    <article class="card${available ? "" : " is-soldout"}" style="animation-delay:${index * 30}ms">
+    <article class="card${available ? "" : " is-unavailable"}" style="animation-delay:${index * 30}ms">
       <div class="card-media">
         <img
           class="menu-img"
@@ -359,7 +359,7 @@ function menuCard(item, index) {
           decoding="async"
           onerror="imageFallback(this)"
         >
-        ${available ? "" : '<span class="soldout-badge">Sold out</span>'}
+        ${available ? "" : '<span class="unavailable-badge">Unavailable</span>'}
         ${
           manageMode
             ? `<input class="avail-toggle" type="checkbox" role="switch" data-availability="${item.id}" ${
@@ -372,7 +372,7 @@ function menuCard(item, index) {
         } aria-label="${
           available
             ? `Add ${escapeHtml(item.name)} to order`
-            : `${escapeHtml(item.name)} is sold out`
+            : `${escapeHtml(item.name)} is unavailable`
         }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
             <path d="M12 5v14M5 12h14"></path>
@@ -435,7 +435,7 @@ menuRoot.addEventListener("click", (event) => {
   const item = findItem(button.dataset.add);
   if (!item) return;
   if (!isAvailable(item.id)) {
-    showToast(`${item.name} is sold out today`);
+    showToast(`${item.name} is unavailable today`);
     return;
   }
   addToCart(item);
@@ -497,9 +497,9 @@ menuRoot.addEventListener("change", (event) => {
       cart = cart.filter((line) => line.id !== item.id);
       saveCart();
       renderCart();
-      showToast(`${item.name} marked sold out and removed from the order`);
+      showToast(`${item.name} marked unavailable and removed from the order`);
     } else {
-      showToast(`${item.name} marked sold out`);
+      showToast(`${item.name} marked unavailable`);
     }
   } else {
     showToast(`${item.name} is back on the menu`);
