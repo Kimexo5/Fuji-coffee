@@ -1870,7 +1870,8 @@ html.splash-seen .splash {
   align-items: center;
   justify-content: center;
   padding: 11px var(--pad);
-  background: var(--accent);
+  /* Matches the hero sun's on-screen shade (its #b23a25 fill at 92% opacity). */
+  background: #b84935;
   color: var(--paper);
   font-size: 12.5px;
   line-height: 1.5;
