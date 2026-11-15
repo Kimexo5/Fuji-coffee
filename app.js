@@ -331,32 +331,70 @@ async function requireAdmin() {
   return pass;
 }
 
-async function fetchRemoteAvailability() {
+async function fetchRemoteState() {
   try {
     const res = await fetch(AVAILABILITY_ENDPOINT, { cache: "no-store" });
     if (!res.ok) return null;
     const data = await res.json();
-    return data && data.availability && typeof data.availability === "object"
-      ? data.availability
-      : null;
+    return data && typeof data === "object" ? data : null;
   } catch {
     return null; // offline / not deployed
   }
 }
 
+// Adopt the shared shop status from the server. Returns true if it was applied.
+function applyRemoteShop(remoteShop) {
+  if (!remoteShop || typeof remoteShop !== "object") return false;
+  shop = {
+    closed: remoteShop.closed === true,
+    autoClosedOn: typeof remoteShop.autoClosedOn === "string" ? remoteShop.autoClosedOn : null
+  };
+  saveShop();
+  applyShopSchedule();
+  return true;
+}
+
 async function refreshAvailability() {
-  const remote = await fetchRemoteAvailability();
+  const remote = await fetchRemoteState();
   if (!remote) return;
-  let changed = false;
-  MENU.forEach((item) => {
-    if (remote[item.id] === false && availability[item.id] !== false) {
-      availability[item.id] = false; changed = true;
-    }
-    if (remote[item.id] === true && availability[item.id] === false) {
-      availability[item.id] = true; changed = true;
-    }
-  });
-  if (changed) { saveAvailability(); renderMenu(); pruneUnavailableCart(); }
+
+  if (remote.availability && typeof remote.availability === "object") {
+    let changed = false;
+    MENU.forEach((item) => {
+      if (remote.availability[item.id] === false && availability[item.id] !== false) {
+        availability[item.id] = false; changed = true;
+      }
+      if (remote.availability[item.id] === true && availability[item.id] === false) {
+        availability[item.id] = true; changed = true;
+      }
+    });
+    if (changed) { saveAvailability(); renderMenu(); pruneUnavailableCart(); }
+  }
+
+  if (applyRemoteShop(remote.shop)) renderShopStatus();
+}
+
+// Lightweight poll so an open/close toggle reaches other visitors without a reload.
+async function refreshShop() {
+  if (manageMode) return; // don't fight the owner's in-progress edits
+  const remote = await fetchRemoteState();
+  if (!remote) return;
+  if (applyRemoteShop(remote.shop)) renderShopStatus();
+}
+
+async function pushShop() {
+  const pass = getAdminPass();
+  if (!pass) return false;
+  try {
+    const res = await fetch(AVAILABILITY_ENDPOINT, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "x-admin-pass": pass },
+      body: JSON.stringify({ shop: { closed: shop.closed, autoClosedOn: shop.autoClosedOn } })
+    });
+    return res.ok;
+  } catch {
+    return false; // offline
+  }
 }
 
 function pruneUnavailableCart() {
@@ -370,7 +408,7 @@ async function verifyAdminPass(pass) {
     const res = await fetch(AVAILABILITY_ENDPOINT, {
       method: "PUT",
       headers: { "Content-Type": "application/json", "x-admin-pass": pass },
-      body: JSON.stringify({ availability: {} })
+      body: JSON.stringify({})
     });
     return res.ok;
   } catch {
@@ -596,7 +634,7 @@ if (shopToggle) {
 
     saveShop();
     renderShopStatus();
-    pushAvailability();
+    pushShop();
   });
 }
 
@@ -1027,9 +1065,13 @@ handleScroll();
 // Re-check the 8:00 PM closing time every minute and whenever the tab regains focus.
 window.setInterval(() => {
   if (applyShopSchedule()) renderShopStatus();
+  refreshShop();
 }, 60000);
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && applyShopSchedule()) renderShopStatus();
+  if (!document.hidden) {
+    if (applyShopSchedule()) renderShopStatus();
+    refreshShop();
+  }
 });
 
 // pull the latest availability from the server (no-op when running locally)

@@ -31,14 +31,19 @@ module.exports = async function handler(req, res) {
         res.status(401).json({ error: "unauthorised" });
         return;
       }
+      // Forward only the parts the caller sent, so an item-availability update
+      // never clobbers the shop status (and vice versa).
+      const payload = { action: "availability", pass: pass };
+      if (body.availability && typeof body.availability === "object") {
+        payload.availability = body.availability;
+      }
+      if (body.shop && typeof body.shop === "object") {
+        payload.shop = body.shop;
+      }
       const r = await fetch(appsScriptUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "availability",
-          pass: pass,
-          availability: body.availability || {}
-        })
+        body: JSON.stringify(payload)
       });
       const data = await r.json();
       res.status(200).json(data);

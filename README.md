@@ -55,7 +55,7 @@ Click **Manage availability** above the menu to reveal a switch on every card. T
 - If a sold-out item was already in an order, it is removed and a toast confirms it.
 - The cart is also pruned of sold-out items when the page loads.
 
-Availability is stored in the browser (`fuji-availability-v1`), so it survives refreshes but **only in the browser where it was set**. Customers on other devices see the defaults (everything available). For availability that all customers see, the switches need to write to a shared backend or a data file — the same caveat as the mock checkout below.
+Availability is cached in the browser (`fuji-availability-v1`) and synced to the shared backend (Google Sheets via `/api/availability`), so marking an item unavailable reaches every customer — not just the browser where it was set. Without a deployed backend the switches still work locally.
 
 ## Shop open / closed
 
@@ -65,9 +65,7 @@ The site tracks whether the shop is taking orders and shows a full-width banner 
 - **Manual control.** In **Manage availability** mode the owner also sees a **Close shop** / **Open shop** button. Closing pauses ordering immediately; opening resumes it. Opening *after* 8 PM keeps the shop open for the rest of that night, and opening *before* 8 PM still lets the 8 PM rule close it as usual.
 - **What customers see.** The menu stays fully browsable, but add-to-cart and the checkout button are disabled, and the banner and cart note explain that ordering is paused.
 
-State lives in `localStorage` (key `fuji-shop-v1`) as `{ closed, autoClosedOn }`, where `autoClosedOn` records the last day the 8 PM rule fired so it only fires once per day.
-
-The 8 PM auto-close runs in every visitor's browser, so it reaches everyone. The **manual** open/closed toggle is currently per-browser; to make it affect all customers it needs to be stored through the shared backend (the same Google Apps Script used for availability).
+State is kept in `localStorage` (key `fuji-shop-v1`) as `{ closed, autoClosedOn }`, where `autoClosedOn` records the last day the 8 PM rule fired so it only fires once per day. The owner's manual open/close is also **shared with everyone** through the backend, so a toggle reaches all customers within about a minute (and immediately on their next page load); the 8 PM auto-close needs no backend because every visitor's browser runs the same rule against Algiers time.
 
 ## Images
 
@@ -96,10 +94,10 @@ The tall 9:16 photos (Chocolate Milkshake, Strawberry Milkshake, Blackberry Chee
 3. In **Project Settings → Environment Variables**, add:
    - `APPS_SCRIPT_URL` = your Google Apps Script web app URL (the one ending in `/exec`)
    - `ADMIN_PASSPHRASE` = `0123` (or your own)
-4. In your Google Sheet's Apps Script, set the script property `ADMIN_PASSPHRASE` = `0123` (Project Settings → Script Properties). Replace the script code with the version that includes availability handling (doGet + doPost with action=availability).
+4. In your Google Sheet's Apps Script, set the script property `ADMIN_PASSPHRASE` = `0123` (Project Settings → Script Properties). Replace the script code with [`google-apps-script.gs`](google-apps-script.gs) from this repo (it handles orders, availability and the shop open/closed status).
 5. Deploy. Vercel builds automatically on every push to `main`.
 
-Orders go to Google Sheets + email (via Apps Script). Availability is stored in an "Availability" sheet tab and synced through `/api/availability`.
+Orders go to Google Sheets + email (via Apps Script). Availability and the shop open/closed status are stored in an "Availability" sheet tab — cell `A1` holds the item map, cell `A2` holds `{ closed, autoClosedOn }` — and synced through `/api/availability`.
 
 Local test: `npm install` then `npx vercel dev` (reads `.env` with `APPS_SCRIPT_URL` and `ADMIN_PASSPHRASE`).
 
