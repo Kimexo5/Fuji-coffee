@@ -3,3 +3,4 @@ node_modules/
 .env
 fuji-coffee-originals/
 *.log
+*.mp4
