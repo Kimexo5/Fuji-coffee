@@ -26,6 +26,10 @@ No build step, no dependencies. Google Fonts loads Instrument Serif and Inter; s
   - Sold-out cards show a badge and lose their add button; adding them is blocked
   - Marking an item sold out also removes it from the current order
   - Availability persists in `localStorage` (key `fuji-availability-v1`); everything is available by default
+- Automatic shop open/closed status, with a banner and ordering lock
+  - Ordering closes by itself at **8:00 PM shop time** (`Africa/Algiers`), independent of the visitor's device clock
+  - The owner can also close or reopen the shop at any time from the admin area
+  - While closed, the menu stays browsable but add-to-cart and checkout are disabled
 - Portrait menu photos in a 4:5 frame, shown uncropped with a paper border, and a “photo coming soon” fallback for missing files
 - Slide-out cart with quantity steppers, line removal, subtotal and total
 - Customer name, phone number, delivery time and optional order notes
@@ -53,6 +57,18 @@ Click **Manage availability** above the menu to reveal a switch on every card. T
 
 Availability is stored in the browser (`fuji-availability-v1`), so it survives refreshes but **only in the browser where it was set**. Customers on other devices see the defaults (everything available). For availability that all customers see, the switches need to write to a shared backend or a data file — the same caveat as the mock checkout below.
 
+## Shop open / closed
+
+The site tracks whether the shop is taking orders and shows a full-width banner when it isn't.
+
+- **Automatic closing.** At **8:00 PM shop time** (`Africa/Algiers`) ordering is paused automatically. The check runs on load, every minute, and whenever the tab regains focus. There is **no automatic re-opening** — once closed, the shop stays closed until the owner opens it.
+- **Manual control.** In **Manage availability** mode the owner also sees a **Close shop** / **Open shop** button. Closing pauses ordering immediately; opening resumes it. Opening *after* 8 PM keeps the shop open for the rest of that night, and opening *before* 8 PM still lets the 8 PM rule close it as usual.
+- **What customers see.** The menu stays fully browsable, but add-to-cart and the checkout button are disabled, and the banner and cart note explain that ordering is paused.
+
+State lives in `localStorage` (key `fuji-shop-v1`) as `{ closed, autoClosedOn }`, where `autoClosedOn` records the last day the 8 PM rule fired so it only fires once per day.
+
+The 8 PM auto-close runs in every visitor's browser, so it reaches everyone. The **manual** open/closed toggle is currently per-browser; to make it affect all customers it needs to be stored through the shared backend (the same Google Apps Script used for availability).
+
 ## Images
 
 Menu photos live in `images/`. The file name in each `MENU` entry must match the file on disk exactly, including spaces and capitalisation. Missing images fall back to a generated placeholder, so the layout never breaks.
@@ -70,6 +86,8 @@ The tall 9:16 photos (Chocolate Milkshake, Strawberry Milkshake, Blackberry Chee
 | Colors, fonts, spacing, splash timing | CSS variables and `.splash` rules in `styles.css` |
 | Cart storage key | `STORAGE_KEY` in `app.js` |
 | Availability storage key and defaults | `AVAILABILITY_KEY` and `loadAvailability()` in `app.js` |
+| Shop closing time and timezone | `CLOSE_HOUR` and `SHOP_TZ` in `app.js` |
+| Shop state storage key | `SHOP_KEY` in `app.js` |
 
 ## Deploy to Vercel (orders + availability)
 
@@ -87,4 +105,6 @@ Local test: `npm install` then `npx vercel dev` (reads `.env` with `APPS_SCRIPT_
 
 ## Note on checkout
 
-The checkout validates the form, calculates totals, shows a confirmation with an order number and clears the cart. On Netlify it also submits the order to Netlify Forms (email + dashboard) and offers a WhatsApp button. Order numbers are randomly generated (`#FJ-0000`) for the prototype.
+The checkout validates the form, calculates totals, shows a confirmation with an order number and clears the cart. Placing an order POSTs to the Google Apps Script web app (via the shared webhook), which records it in the sheet and sends a notification email. Order numbers are randomly generated (`#FJ-0000`).
+
+When the shop is closed, the checkout button is disabled and submitting is blocked with a toast, so no order is sent.

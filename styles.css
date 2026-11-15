@@ -301,10 +301,14 @@ html.splash-seen .splash {
 
 /* ------------------------------ Header ------------------------------ */
 
-.site-header {
+.topbar {
   position: sticky;
   top: 0;
   z-index: 40;
+}
+
+.site-header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1857,6 +1861,77 @@ html.splash-seen .splash {
 [data-reveal].revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ---------------------------- Shop status --------------------------- */
+
+.shop-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px var(--pad);
+  background: var(--accent);
+  color: var(--paper);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.shop-banner[hidden] {
+  display: none;
+}
+
+.shop-banner p {
+  margin: 0;
+  max-width: 62ch;
+}
+
+.shop-banner strong {
+  font-weight: 500;
+}
+
+.shop-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.shop-controls[hidden] {
+  display: none;
+}
+
+.shop-status {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.shop-toggle[aria-pressed="true"],
+.shop-toggle[aria-pressed="true"]:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+/* Ordering is paused: keep the buttons visible but clearly inactive. */
+body.shop-closed .card-add {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+body.shop-closed .card-add:hover {
+  background: var(--paper);
+  border-color: var(--ink);
+  color: var(--ink);
+  transform: none;
+}
+
+.closed-note {
+  color: var(--accent);
 }
 
 /* ---------------------------- Responsive ---------------------------- */

@@ -90,6 +90,9 @@ const STORAGE_KEY = "fuji-cart-v1";
 const AVAILABILITY_KEY = "fuji-availability-v1";
 const AVAILABILITY_ENDPOINT = "/api/availability";
 const ADMIN_PASS_KEY = "fuji-admin-pass";
+const SHOP_KEY = "fuji-shop-v1";
+const SHOP_TZ = "Africa/Algiers";
+const CLOSE_HOUR = 20; // 8:00 PM shop time — ordering closes for the day
 const SHOP_WHATSAPP = "213669353529";
 const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbyMaCYsIaXGZjl6teX5nbTaO4pE7JbkFX5z_Y-5eTzXjzXdqlwx6lpufODqgz7TLeXO/exec";
 
@@ -149,11 +152,18 @@ const toastEl = document.getElementById("toast");
 const siteHeader = document.getElementById("siteHeader");
 const manageToggle = document.getElementById("manageToggle");
 const manageHint = document.getElementById("manageHint");
+const shopBanner = document.getElementById("shopBanner");
+const shopControls = document.getElementById("shopControls");
+const shopStatus = document.getElementById("shopStatus");
+const shopToggle = document.getElementById("shopToggle");
+const checkoutBtn = document.getElementById("checkoutBtn");
+const closedNote = document.getElementById("closedNote");
 
 /* ------------------------------- State ------------------------------ */
 
 let cart = loadCart();
 let availability = loadAvailability();
+let shop = loadShop();
 let manageMode = false;
 let activeFilter = "all";
 let lastFocused = null;
@@ -214,6 +224,87 @@ function saveAvailability() {
   }
 }
 
+/* --------------------------- Shop open/closed ----------------------- */
+
+function loadShop() {
+  const fallback = { closed: false, autoClosedOn: null };
+  try {
+    const raw = localStorage.getItem(SHOP_KEY);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return fallback;
+    return {
+      closed: parsed.closed === true,
+      autoClosedOn: typeof parsed.autoClosedOn === "string" ? parsed.autoClosedOn : null
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+function saveShop() {
+  try {
+    localStorage.setItem(SHOP_KEY, JSON.stringify(shop));
+  } catch {
+    /* storage may be unavailable; the toggle still works for this visit */
+  }
+}
+
+// The shop's wall clock (Africa/Algiers), independent of the visitor's device time.
+function shopClock(date = new Date()) {
+  let year, month, day, hour, minute;
+  try {
+    const parts = {};
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: SHOP_TZ, year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false
+    }).formatToParts(date).forEach((part) => { parts[part.type] = part.value; });
+    year = parts.year; month = parts.month; day = parts.day;
+    hour = Number(parts.hour) % 24; minute = Number(parts.minute);
+  } catch {
+    year = String(date.getFullYear());
+    month = String(date.getMonth() + 1).padStart(2, "0");
+    day = String(date.getDate()).padStart(2, "0");
+    hour = date.getHours(); minute = date.getMinutes();
+  }
+  return { dateKey: `${year}-${month}-${day}`, minutes: hour * 60 + minute };
+}
+
+// Ordering closes automatically at 8:00 PM shop time. There is no auto-open:
+// once closed it stays closed until the owner opens it again.
+function applyShopSchedule() {
+  const { dateKey, minutes } = shopClock();
+  if (minutes >= CLOSE_HOUR * 60 && shop.autoClosedOn !== dateKey) {
+    shop.closed = true;
+    shop.autoClosedOn = dateKey;
+    saveShop();
+    return true;
+  }
+  return false;
+}
+
+function isShopOpen() {
+  return !shop.closed;
+}
+
+function renderShopStatus() {
+  const open = isShopOpen();
+  document.body.classList.toggle("shop-closed", !open);
+
+  if (shopBanner) shopBanner.hidden = open;
+  if (shopControls) shopControls.hidden = !manageMode;
+  if (shopStatus) shopStatus.textContent = open ? "Shop is open" : "Shop is closed";
+
+  if (shopToggle) {
+    shopToggle.setAttribute("aria-pressed", String(!open));
+    const label = shopToggle.querySelector("span");
+    if (label) label.textContent = open ? "Close shop" : "Open shop";
+  }
+
+  if (checkoutBtn) checkoutBtn.disabled = !open;
+  if (closedNote) closedNote.hidden = open;
+}
+
 function getAdminPass() {
   try { return sessionStorage.getItem(ADMIN_PASS_KEY) || ""; } catch { return ""; }
 }
@@ -222,6 +313,22 @@ function setAdminPass(pass) {
 }
 function clearAdminPass() {
   try { sessionStorage.removeItem(ADMIN_PASS_KEY); } catch { /* ignore */ }
+}
+
+async function requireAdmin() {
+  let pass = getAdminPass();
+  if (!pass) {
+    pass = window.prompt("Admin passphrase to edit availability:");
+    if (!pass) return null;
+  }
+  const ok = await verifyAdminPass(pass);
+  if (!ok) {
+    clearAdminPass();
+    showToast("Incorrect passphrase");
+    return null;
+  }
+  setAdminPass(pass);
+  return pass;
 }
 
 async function fetchRemoteAvailability() {
@@ -435,6 +542,10 @@ menuRoot.addEventListener("click", (event) => {
   if (!button || button.disabled) return;
   const item = findItem(button.dataset.add);
   if (!item) return;
+  if (!isShopOpen()) {
+    showToast("We're closed right now — ordering is paused");
+    return;
+  }
   if (!isAvailable(item.id)) {
     showToast(`${item.name} is unavailable today`);
     return;
@@ -449,32 +560,45 @@ manageToggle.addEventListener("click", async () => {
     manageToggle.setAttribute("aria-pressed", "false");
     manageHint.hidden = true;
     document.body.classList.remove("manage-on");
+    if (shopControls) shopControls.hidden = true;
     renderMenu();
     manageToggle.querySelector("span").textContent = "Manage availability";
     return;
   }
 
-  let pass = getAdminPass();
-  if (!pass) {
-    pass = window.prompt("Admin passphrase to edit availability:");
-    if (!pass) return;
-  }
-
-  const ok = await verifyAdminPass(pass);
-  if (!ok) {
-    clearAdminPass();
-    showToast("Incorrect passphrase");
-    return;
-  }
-  setAdminPass(pass);
+  const pass = await requireAdmin();
+  if (!pass) return;
 
   manageMode = true;
   manageToggle.setAttribute("aria-pressed", "true");
   manageHint.hidden = false;
   document.body.classList.add("manage-on");
+  renderShopStatus();
   renderMenu();
   manageToggle.querySelector("span").textContent = "Done editing";
 });
+
+if (shopToggle) {
+  shopToggle.addEventListener("click", async () => {
+    const pass = await requireAdmin();
+    if (!pass) return;
+
+    if (isShopOpen()) {
+      shop.closed = true;
+      showToast("Shop closed — ordering is paused");
+    } else {
+      shop.closed = false;
+      const { dateKey, minutes } = shopClock();
+      // Opening after closing time keeps the shop open for the rest of the night.
+      if (minutes >= CLOSE_HOUR * 60) shop.autoClosedOn = dateKey;
+      showToast("Shop open — ordering is on");
+    }
+
+    saveShop();
+    renderShopStatus();
+    pushAvailability();
+  });
+}
 
 menuRoot.addEventListener("change", (event) => {
   const toggle = event.target.closest("[data-availability]");
@@ -741,6 +865,11 @@ customerPhone.addEventListener("input", () => {
 checkoutForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
+  if (!isShopOpen()) {
+    showToast("We're closed right now — ordering is paused");
+    return;
+  }
+
   if (!customerName.value.trim()) {
     customerName.setCustomValidity("Please add your full name.");
   }
@@ -885,12 +1014,23 @@ if ("IntersectionObserver" in window) {
 
 /* -------------------------------- Init ------------------------------ */
 
+applyShopSchedule();
+renderShopStatus();
+
 cart = cart.filter((line) => isAvailable(line.id));
 saveCart();
 
 renderMenu();
 renderCart();
 handleScroll();
+
+// Re-check the 8:00 PM closing time every minute and whenever the tab regains focus.
+window.setInterval(() => {
+  if (applyShopSchedule()) renderShopStatus();
+}, 60000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && applyShopSchedule()) renderShopStatus();
+});
 
 // pull the latest availability from the server (no-op when running locally)
 refreshAvailability();
