@@ -50,6 +50,12 @@ const MENU = [
     desc: "Layered fruit and citrus, served long over ice.", image: "images/Cocktail.jpg" },
 
   // Cheesecakes & pastries
+  // `newOn` is the Algiers date the item was added. A matching date shows a "New"
+  // badge on the card plus the announcement banner, and expires on its own the
+  // next day. Set it to a date string only while an item is actually new.
+  { id: "black-forest-cake", name: "Black Forest Cake", price: 450, category: "pastries",
+    desc: "Dark cocoa sponge layered with whipped cream and cherries.", image: "images/Black Forest Cake.jpg",
+    newOn: "2026-11-17" },
   { id: "san-sebastian-cheesecake", name: "San Sebastian Cheesecake", price: 400, category: "pastries",
     desc: "Burnt on top, soft at the centre, cut cold.", image: "images/San Sebastian Cheesecake.jpg" },
   { id: "speculoos-lotus-cheesecake", name: "Speculoos (Lotus) Cheesecake", price: 450, category: "pastries",
@@ -158,6 +164,7 @@ const shopStatus = document.getElementById("shopStatus");
 const shopToggle = document.getElementById("shopToggle");
 const checkoutBtn = document.getElementById("checkoutBtn");
 const closedNote = document.getElementById("closedNote");
+const newBanner = document.getElementById("newBanner");
 
 /* ------------------------------- State ------------------------------ */
 
@@ -285,6 +292,36 @@ function applyShopSchedule() {
 
 function isShopOpen() {
   return !shop.closed;
+}
+
+/* ---------------------------- New items ----------------------------- */
+
+// Items whose `newOn` matches today's Algiers date get a "New" badge and the
+// announcement banner. There is nothing to clean up afterwards: once the date
+// no longer matches, the badge and banner simply stop rendering.
+function isNewToday(item) {
+  return typeof item.newOn === "string" && item.newOn === shopClock().dateKey;
+}
+
+function newItemsToday() {
+  return MENU.filter((item) => isNewToday(item));
+}
+
+function renderNewBanner() {
+  if (!newBanner) return;
+
+  const items = newItemsToday();
+  if (items.length === 0) {
+    newBanner.hidden = true;
+    newBanner.textContent = "";
+    return;
+  }
+
+  const names = items
+    .map((item) => `${escapeHtml(item.name)} — ${fmt(item.price)}`)
+    .join(" · ");
+  newBanner.innerHTML = `<p><strong>New today:</strong> <a href="#menu">${names}</a></p>`;
+  newBanner.hidden = false;
 }
 
 function renderShopStatus() {
@@ -491,6 +528,7 @@ function cartTotalQty() {
 
 function menuCard(item, index) {
   const available = isAvailable(item.id);
+  const isNew = isNewToday(item);
 
   return `
     <article class="card${available ? "" : " is-unavailable"}" style="animation-delay:${index * 30}ms">
@@ -505,6 +543,7 @@ function menuCard(item, index) {
           decoding="async"
           onerror="imageFallback(this)"
         >
+        ${isNew ? '<span class="new-badge">New</span>' : ""}
         ${available ? "" : '<span class="unavailable-badge">Unavailable</span>'}
         ${
           manageMode
@@ -1054,6 +1093,7 @@ if ("IntersectionObserver" in window) {
 
 applyShopSchedule();
 renderShopStatus();
+renderNewBanner();
 
 cart = cart.filter((line) => isAvailable(line.id));
 saveCart();
@@ -1062,14 +1102,26 @@ renderMenu();
 renderCart();
 handleScroll();
 
+// Roll the "New" markers over at midnight (Algiers) without a page reload.
+let lastDateKey = shopClock().dateKey;
+function refreshDailyMarkers() {
+  const today = shopClock().dateKey;
+  if (today === lastDateKey) return;
+  lastDateKey = today;
+  renderNewBanner();
+  renderMenu();
+}
+
 // Re-check the 8:00 PM closing time every minute and whenever the tab regains focus.
 window.setInterval(() => {
   if (applyShopSchedule()) renderShopStatus();
+  refreshDailyMarkers();
   refreshShop();
 }, 60000);
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
     if (applyShopSchedule()) renderShopStatus();
+    refreshDailyMarkers();
     refreshShop();
   }
 });

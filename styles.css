@@ -923,6 +923,24 @@ html.splash-seen .splash {
   text-transform: uppercase;
 }
 
+.new-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 5px 9px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* A new item that is also sold out stacks its badges instead of overlapping. */
+.card-media:has(.new-badge) .unavailable-badge {
+  top: 42px;
+}
+
 .avail-toggle {
   position: absolute;
   top: 12px;
@@ -1861,6 +1879,35 @@ html.splash-seen .splash {
 [data-reveal].revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ----------------------------- New items ---------------------------- */
+
+.new-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px var(--pad);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.new-banner[hidden] {
+  display: none;
+}
+
+.new-banner p {
+  margin: 0;
+  max-width: 62ch;
+}
+
+.new-banner a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ---------------------------- Shop status --------------------------- */

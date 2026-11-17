@@ -21,7 +21,7 @@ No build step, no dependencies. Google Fonts loads Instrument Serif and Inter; s
   - Click or tap anywhere to skip, or press Escape / Enter / Space
   - Plays once per browser session (`sessionStorage`, key `fujiSplashSeen`)
 - Logo in the header, with the same mountain/sun/cloud/wave motifs used across the page
-- Filterable menu (All / Milkshakes / Frappuccinos / Coffee / Other drinks / Cheesecakes) with 31 items in DA
+- Filterable menu (All / Milkshakes / Frappuccinos / Coffee / Other drinks / Cheesecakes) with 33 items in DA
 - “Manage availability” mode with a switch on every card, so items that run out can be marked sold out for the day
   - Sold-out cards show a badge and lose their add button; adding them is blocked
   - Marking an item sold out also removes it from the current order
@@ -30,6 +30,9 @@ No build step, no dependencies. Google Fonts loads Instrument Serif and Inter; s
   - Ordering closes by itself at **8:00 PM shop time** (`Africa/Algiers`), independent of the visitor's device clock
   - The owner can also close or reopen the shop at any time from the admin area
   - While closed, the menu stays browsable but add-to-cart and checkout are disabled
+- “New today” highlight for freshly added items
+  - A `New` badge sits on the card and a dark announcement bar appears above the header, linking to the menu
+  - Both show only on the item's `newOn` date (`Africa/Algiers`) and disappear by themselves the next day
 - Portrait menu photos in a 4:5 frame, shown uncropped with a paper border, and a “photo coming soon” fallback for missing files
 - Slide-out cart with quantity steppers, line removal, subtotal and total
 - Customer name, phone number, delivery time and optional order notes
@@ -45,7 +48,7 @@ No build step, no dependencies. Google Fonts loads Instrument Serif and Inter; s
 | Frappuccinos | 3 | 400 DA |
 | Coffee | 5 | 50–250 DA |
 | Other Beverages | 2 | 250–300 DA |
-| Cheesecakes & Pastries | 16 | 180–800 DA |
+| Cheesecakes & Pastries | 18 | 180–800 DA |
 
 ## Marking items sold out
 
@@ -67,6 +70,24 @@ The site tracks whether the shop is taking orders and shows a full-width banner 
 
 State is kept in `localStorage` (key `fuji-shop-v1`) as `{ closed, autoClosedOn }`, where `autoClosedOn` records the last day the 8 PM rule fired so it only fires once per day. The owner's manual open/close is also **shared with everyone** through the backend, so a toggle reaches all customers within about a minute (and immediately on their next page load); the 8 PM auto-close needs no backend because every visitor's browser runs the same rule against Algiers time.
 
+## Adding a new item
+
+Add an entry to `MENU` in **both** `app.js` and `app-ar.js` (English and Arabic), drop the photo in `images/`, and give the entry a `newOn` date to highlight it:
+
+```js
+{ id: "black-forest-cake", name: "Black Forest Cake", price: 450, category: "pastries",
+  desc: "Dark cocoa sponge layered with whipped cream and cherries.",
+  image: "images/Black Forest Cake.jpg",
+  newOn: "2026-11-17" },
+```
+
+- `id` must be unique and must match the `data-availability` switches and the backend's stored availability map.
+- `image` must match the file on disk exactly, including spaces and capitalisation.
+- `newOn` is the **Algiers date** the item was added (`YYYY-MM-DD`). On that day the item gets a `New` badge and the announcement banner; the next day both stop rendering on their own. Remove the property once an item is no longer new — a past date is harmless, it simply never matches again.
+- To make the item appear first in its group, list it first in the `MENU` array.
+
+Items added to the array appear for every visitor immediately, so no backend change is needed.
+
 ## Images
 
 Menu photos live in `images/`. The file name in each `MENU` entry must match the file on disk exactly, including spaces and capitalisation. Missing images fall back to a generated placeholder, so the layout never breaks.
@@ -86,6 +107,7 @@ The tall 9:16 photos (Chocolate Milkshake, Strawberry Milkshake, Blackberry Chee
 | Availability storage key and defaults | `AVAILABILITY_KEY` and `loadAvailability()` in `app.js` |
 | Shop closing time and timezone | `CLOSE_HOUR` and `SHOP_TZ` in `app.js` |
 | Shop state storage key | `SHOP_KEY` in `app.js` |
+| “New today” highlight | `newOn` on a `MENU` entry; `renderNewBanner()` in `app.js` |
 
 ## Deploy to Vercel (orders + availability)
 
