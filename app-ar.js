@@ -3,11 +3,11 @@
    --------------------------------------------------------------- */
 
 const GROUPS = [
+  { id: "pastries", name: "Cheesecakes & Pastries", meta: "Cheesecake & pastry" },
   { id: "milkshakes", name: "ميلك شيك", meta: "Milkshake" },
   { id: "frappuccinos", name: "فرابتشينو", meta: "Frappuccino" },
   { id: "coffee", name: "قهوة", meta: "قهوة" },
-  { id: "other", name: "Other Beverages", meta: "Cold drink" },
-  { id: "pastries", name: "Cheesecakes & Pastries", meta: "Cheesecake & pastry" }
+  { id: "other", name: "Other Beverages", meta: "Cold drink" }
 ];
 
 const MENU = [
