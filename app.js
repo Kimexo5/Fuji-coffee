@@ -628,7 +628,6 @@ menuRoot.addEventListener("click", (event) => {
     return;
   }
   addToCart(item);
-  openCart();
 });
 
 manageToggle.addEventListener("click", async () => {
@@ -796,7 +795,13 @@ function addToCart(item, qty = 1) {
   saveCart();
   renderCart();
   updateBadge(cartTotalQty(), true);
-  showToast(`${item.name} added`);
+  // Deliberately does NOT open the cart: customers keep browsing and add as many
+  // items as they like, with a way to jump to the order if they want to.
+  const count = cartTotalQty();
+  showToast(`${item.name} added`, {
+    label: `View order (${count})`,
+    onClick: openCart
+  });
 }
 
 function stepLine(key, delta) {
@@ -1048,13 +1053,35 @@ checkoutForm.addEventListener("submit", (event) => {
 
 /* ------------------------------- Toast ------------------------------ */
 
-function showToast(message) {
-  toastEl.textContent = message;
+function hideToast() {
+  window.clearTimeout(toastTimer);
+  toastEl.classList.remove("show");
+}
+
+function showToast(message, action = null) {
+  toastEl.replaceChildren();
+
+  const text = document.createElement("span");
+  text.className = "toast-text";
+  text.textContent = message;
+  toastEl.appendChild(text);
+
+  if (action) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "toast-action";
+    button.textContent = action.label;
+    button.addEventListener("click", () => {
+      hideToast();
+      action.onClick();
+    });
+    toastEl.appendChild(button);
+  }
+
   toastEl.classList.add("show");
   window.clearTimeout(toastTimer);
-  toastTimer = window.setTimeout(() => {
-    toastEl.classList.remove("show");
-  }, 2600);
+  // An actionable toast needs to stay up long enough to actually be tapped.
+  toastTimer = window.setTimeout(hideToast, action ? 5000 : 2600);
 }
 
 /* ------------------------------ Helpers ----------------------------- */

@@ -35,6 +35,8 @@ No build step, no dependencies. Google Fonts loads Instrument Serif and Inter; s
   - Both show only on the item's `newOn` date (`Africa/Algiers`) and disappear by themselves the next day
 - Portrait menu photos in a 4:5 frame, shown uncropped with a paper border, and a “photo coming soon” fallback for missing files
 - Slide-out cart with quantity steppers, line removal, subtotal and total
+- Adding an item does **not** open the cart: the menu stays put and a confirmation with a **View order** button appears, so customers can add several items in a row
+  - The header cart button keeps a live count of items in the order
 - Customer name, phone number, delivery time and optional order notes
 - Mock checkout with order number and delivery estimate
 - Cart persists in `localStorage`, so a refresh doesn't lose the order
@@ -59,6 +61,15 @@ Click **Manage availability** above the menu to reveal a switch on every card. T
 - The cart is also pruned of sold-out items when the page loads.
 
 Availability is cached in the browser (`fuji-availability-v1`) and synced to the shared backend (Google Sheets via `/api/availability`), so marking an item unavailable reaches every customer — not just the browser where it was set. Without a deployed backend the switches still work locally.
+
+## Adding items to the order
+
+Tapping **+** on a card adds the item and shows a short confirmation at the bottom of the screen with a **View order** button — the cart drawer deliberately stays closed so the menu doesn't disappear after every tap.
+
+- The confirmation reads the item name plus the running total, e.g. `Latte added` with `View order (3)`.
+- **View order** opens the slide-out cart with everything added so far.
+- The cart button in the header always shows the current item count, and the order is saved in `localStorage`, so it survives a refresh.
+- Adding the same item twice increases its quantity; each line can be adjusted with the **−** / **+** steppers in the cart.
 
 ## Shop open / closed
 

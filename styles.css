@@ -1848,6 +1848,11 @@ html.splash-seen .splash {
   left: 50%;
   bottom: 26px;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
   padding: 12px 20px;
   background: var(--ink);
   color: var(--paper);
@@ -1859,6 +1864,9 @@ html.splash-seen .splash {
   transform: translate(-50%, 14px);
   pointer-events: none;
   transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  /* `left: 50%` alone caps a shrink-to-fit box at half the viewport, which made
+     the toast wrap into a tall column on phones. max-content + max-width fixes it. */
+  width: max-content;
   max-width: calc(100vw - 40px);
   text-align: center;
 }
@@ -1866,6 +1874,24 @@ html.splash-seen .splash {
 .toast.show {
   opacity: 1;
   transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.toast-action {
+  padding: 6px 13px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.25s var(--ease), color 0.25s var(--ease);
+}
+
+.toast-action:hover,
+.toast-action:focus-visible {
+  background: var(--paper);
+  color: var(--ink);
 }
 
 /* ------------------------------ Reveal ------------------------------ */
