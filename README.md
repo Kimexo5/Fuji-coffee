@@ -21,7 +21,7 @@ No build step, no dependencies. Google Fonts loads Instrument Serif and Inter; s
   - Click or tap anywhere to skip, or press Escape / Enter / Space
   - Plays once per browser session (`sessionStorage`, key `fujiSplashSeen`)
 - Logo in the header, with the same mountain/sun/cloud/wave motifs used across the page
-- Filterable menu (All / Milkshakes / Frappuccinos / Coffee / Other drinks / Cheesecakes) with 33 items in DA
+- Filterable menu (All / Milkshakes / Frappuccinos / Coffee / Other drinks / Cheesecakes) with 34 items in DA
 - “Manage availability” mode with a switch on every card, so items that run out can be marked sold out for the day
   - Sold-out cards show a badge and lose their add button; adding them is blocked
   - Marking an item sold out also removes it from the current order
@@ -50,13 +50,14 @@ No build step, no dependencies. Google Fonts loads Instrument Serif and Inter; s
 | Frappuccinos | 3 | 400 DA |
 | Coffee | 5 | 50–250 DA |
 | Other Beverages | 2 | 250–300 DA |
-| Cheesecakes & Pastries | 18 | 180–800 DA |
+| Cheesecakes & Pastries | 19 | 180–800 DA |
 
 ## Marking items sold out
 
 Click **Manage availability** above the menu to reveal a switch on every card. Turn a switch off to mark that item sold out for the day; turn it back on when it returns. Click **Done editing** to hide the switches again.
 
 - Sold-out cards show a “Sold out” badge, fade their photo and hide the add button.
+- Within each menu group, available items are listed first and sold-out ones drop to the bottom, so the top of the menu always shows what customers can order.
 - If a sold-out item was already in an order, it is removed and a toast confirms it.
 - The cart is also pruned of sold-out items when the page loads.
 
@@ -86,10 +87,10 @@ State is kept in `localStorage` (key `fuji-shop-v1`) as `{ closed, autoClosedOn 
 Add an entry to `MENU` in **both** `app.js` and `app-ar.js` (English and Arabic), drop the photo in `images/`, and give the entry a `newOn` date to highlight it:
 
 ```js
-{ id: "black-forest-cake", name: "Black Forest Cake", price: 450, category: "pastries",
-  desc: "Dark cocoa sponge layered with whipped cream and cherries.",
-  image: "images/Black Forest Cake.jpg",
-  newOn: "2026-11-17" },
+{ id: "cloud-cake", name: "Cloud Cake", price: 400, category: "pastries",
+  desc: "A light, airy cake with a soft cream finish.",
+  image: "images/Cloud Cake.jpg",
+  newOn: "2026-11-24" },
 ```
 
 - `id` must be unique and must match the `data-availability` switches and the backend's stored availability map.

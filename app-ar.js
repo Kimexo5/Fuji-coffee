@@ -53,6 +53,9 @@ const MENU = [
   // `newOn` is the Algiers date the item was added. A matching date shows a "New"
   // badge on the card plus the announcement banner, and expires on its own the
   // next day. Set it to a date string only while an item is actually new.
+  { id: "cloud-cake", name: "كعكة السحاب", price: 400, category: "pastries",
+    desc: "كعكة هوائية خفيفة مع طبقة كريمة ناعمة.", image: "images/Cloud Cake.jpg",
+    newOn: "2026-11-24" },
   { id: "black-forest-cake", name: "كعكة الغابة السوداء", price: 450, category: "pastries",
     desc: "إسفنج كاكاو داكن مع طبقات من الكريمة والكرز.", image: "images/Black Forest Cake.jpg",
     newOn: "2026-11-17" },
@@ -580,7 +583,11 @@ function renderMenu() {
     .filter((group) => activeFilter === "all" || group.id === activeFilter)
     .map((group) => ({
       ...group,
-      items: MENU.filter((item) => item.category === group.id)
+      // Available items lead each group; sold-out ones sink to the bottom.
+      // Array#sort is stable, so the original order is kept within each half.
+      items: MENU
+        .filter((item) => item.category === group.id)
+        .sort((a, b) => Number(isAvailable(b.id)) - Number(isAvailable(a.id)))
     }))
     .filter((group) => group.items.length > 0);
 
