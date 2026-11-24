@@ -53,7 +53,7 @@ const MENU = [
   // `newOn` is the Algiers date the item was added. A matching date shows a "New"
   // badge on the card plus the announcement banner, and expires on its own the
   // next day. Set it to a date string only while an item is actually new.
-  { id: "cloud-cake", name: "كعكة السحاب", price: 400, category: "pastries",
+  { id: "cloud-cake", name: "كعكة الغيمة", price: 400, category: "pastries",
     desc: "كعكة هوائية خفيفة مع طبقة كريمة ناعمة.", image: "images/Cloud Cake.jpg",
     newOn: "2026-11-24" },
   { id: "black-forest-cake", name: "كعكة الغابة السوداء", price: 450, category: "pastries",
